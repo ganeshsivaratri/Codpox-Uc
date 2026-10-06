@@ -368,13 +368,105 @@ page("initiatives.html", "Initiatives | CodPox",
      "Initiatives under CodPox: Padharaksha, SXC (SintraX Creations), MemoryWall and more coming soon.", inits)
 
 # ================= PORTFOLIO =================
+FORM_URL = "https://forms.gle/HE9ZDQaqFjRHSJsR6"   # Google Form for portfolio requests
+INK = "#15181B"
+
+def form_btn(label, cls="btn"):
+    return f'<a class="{cls}" href="{FORM_URL}" target="_blank" rel="noopener">{label} {arrow()}</a>'
+
+def wire(kind):
+    bar = f'<rect x="1.5" y="1.5" width="297" height="24" fill="#fff" stroke="{INK}" stroke-width="2.5"/><circle cx="14" cy="13.5" r="3.5" fill="#C8F31D" stroke="{INK}" stroke-width="1.5"/><circle cx="26" cy="13.5" r="3.5" fill="none" stroke="{INK}" stroke-width="1.5"/><rect x="60" y="8" width="140" height="11" rx="5.5" fill="#EEF9BF" stroke="{INK}" stroke-width="1.5"/>'
+    if kind == "min":
+        body = f'''<circle cx="44" cy="62" r="17" fill="#C8F31D" stroke="{INK}" stroke-width="2.5"/>
+<rect x="72" y="50" width="96" height="11" rx="5" fill="{INK}"/><rect x="72" y="68" width="70" height="7" rx="3.5" fill="#B8BEB0"/>
+<rect x="24" y="96" width="170" height="7" rx="3.5" fill="#DCE0D6"/><rect x="24" y="110" width="140" height="7" rx="3.5" fill="#DCE0D6"/><rect x="24" y="124" width="100" height="7" rx="3.5" fill="#DCE0D6"/>'''
+    elif kind == "pro":
+        cards = ""
+        for i, (x, y) in enumerate([(24, 84), (104, 84), (184, 84), (264, 84)][:3]):
+            cards += f'<rect x="{x}" y="{y}" width="70" height="52" rx="8" fill="#fff" stroke="{INK}" stroke-width="2.5"/><rect x="{x+6}" y="{y+6}" width="58" height="22" rx="4" fill="#C8F31D"/><rect x="{x+6}" y="{y+34}" width="40" height="6" rx="3" fill="{INK}"/><rect x="{x+6}" y="{y+43}" width="28" height="5" rx="2.5" fill="#B8BEB0"/>'
+        body = f'''<circle cx="40" cy="56" r="15" fill="#C8F31D" stroke="{INK}" stroke-width="2.5"/>
+<rect x="64" y="44" width="90" height="11" rx="5" fill="{INK}"/><rect x="64" y="61" width="60" height="7" rx="3.5" fill="#B8BEB0"/>
+<rect x="190" y="42" width="30" height="14" rx="7" fill="#fff" stroke="{INK}" stroke-width="2"/><rect x="226" y="42" width="30" height="14" rx="7" fill="#fff" stroke="{INK}" stroke-width="2"/><rect x="262" y="42" width="24" height="14" rx="7" fill="#fff" stroke="{INK}" stroke-width="2"/>
+{cards}'''
+    else:
+        body = f'''<rect x="22" y="44" width="150" height="16" rx="8" fill="{INK}"/><rect x="22" y="66" width="104" height="16" rx="8" fill="{INK}"/><rect x="22" y="92" width="80" height="8" rx="4" fill="#B8BEB0"/>
+<rect x="22" y="112" width="64" height="22" rx="11" fill="#C8F31D" stroke="{INK}" stroke-width="2.5"/>
+<g transform="rotate(-9 232 110)"><rect x="196" y="82" width="74" height="54" rx="9" fill="#E1ECF5" stroke="{INK}" stroke-width="2.5"/></g>
+<g transform="rotate(5 232 110)"><rect x="200" y="78" width="74" height="54" rx="9" fill="#fff" stroke="{INK}" stroke-width="2.5"/><rect x="207" y="85" width="60" height="22" rx="4" fill="#EEF9BF"/><rect x="207" y="113" width="40" height="6" rx="3" fill="{INK}"/></g>
+<circle cx="236" cy="56" r="22" fill="#C8F31D" stroke="{INK}" stroke-width="2.5"/><circle cx="228" cy="48" r="5" fill="#fff" opacity=".8"/><circle cx="262" cy="40" r="4" fill="{INK}"/>
+<rect x="150" y="100" width="46" height="16" rx="8" fill="{INK}"/><path d="M290 70v10M285 75h10" stroke="{INK}" stroke-width="2.5" stroke-linecap="round"/>'''
+    return f'<svg viewBox="0 0 300 150" role="img" aria-label="Preview of the {kind} design level">{bar}{body}</svg>'
+
+def pack(cls, kind, name, price, months, redesigns, blurb, feats, best):
+    li = "".join(f"<li>{f}</li>" for f in feats)
+    return f"""<article class="pack {cls}">
+<div class="wire">{wire(kind)}</div>
+<div><h3>{name}</h3><p style="margin-top:.4rem">{blurb}</p></div>
+<div class="price">₹{price}</div>
+<div class="terms"><div><strong>{months} months</strong><span>on your own address</span></div><div><strong>{redesigns} redesigns</strong><span>while your pack runs</span></div></div>
+<ul class="feat">{li}</ul>
+<p class="best"><b>Best for:</b> {best}</p>
+{form_btn("Choose " + name)}
+</article>"""
+
+def svc(cls, icon, title, text):
+    return f'<article class="card {cls}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true">{icon}</svg><h3>{title}</h3><p>{text}</p></article>'
+
+IC = {
+ "code": '<path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>',
+ "globe": '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+ "cloud": '<path d="M7 18a4 4 0 0 1-.5-8A6 6 0 0 1 18 9.5a4.2 4.2 0 0 1-.5 8.5Z"/>',
+ "phone": '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
+ "refresh": '<path d="M20 11a8 8 0 0 0-14-4M4 4v4h4M4 13a8 8 0 0 0 14 4M20 20v-4h-4"/>',
+ "chat": '<path d="M4 5h16v11H9l-5 4Z"/>',
+}
+
+packs_html = (
+ pack("pack--min", "min", "Minimal Design", "999", 12, 2,
+      "A clean, focused portfolio that puts your work online without fuss.",
+      ["Your own address, yourname.codpox.com, for 12 months",
+       "2 redesigns during your 12 months",
+       "Clean single-page layout",
+       "About, Education, Skills, Projects and Contact sections",
+       "Hosting included and mobile-friendly"],
+      "your first portfolio, or getting online quickly.")
+ + pack("pack--pro", "pro", "Pro Design", "1599", 18, 5,
+      "A fuller portfolio with room for your projects to stand out.",
+      ["Your own address, yourname.codpox.com, for 18 months",
+       "5 redesigns during your 18 months",
+       "Everything in Minimal Design",
+       "Project cards with screenshots and links",
+       "Achievements and Experience sections",
+       "Links to GitHub, LinkedIn and your other profiles",
+       "Smooth scroll effects"],
+      "having several projects to show, and a portfolio that keeps growing.")
+ + pack("pack--dp", "dp", "Design Pro", "2199", 24, 8,
+      "High-level design, made to be remembered the moment it opens.",
+      ["Your own address, yourname.codpox.com, for 24 months",
+       "8 redesigns during your 24 months",
+       "Everything in Pro Design",
+       "High-level custom design: your colors, type and layout style",
+       "Motion and interactive details, including 3D touches",
+       "Extra polish from our developers before it goes live"],
+      "standing out the moment someone opens your link.")
+)
+
+services_html = (
+ svc("t-lime", IC["code"], "Built by developers", "Real CodPox developers design and build it for you. It is not a template you fill in alone.")
+ + svc("t-sky", IC["globe"], "Your own address", "yourname.codpox.com, yours for the whole length of your pack.")
+ + svc("t-peach", IC["cloud"], "Hosting included", "We put it online and keep it running while your pack lasts.")
+ + svc("", IC["phone"], "Mobile-ready", "Reads well on a phone, a tablet and a laptop.")
+ + svc("t-lime", IC["refresh"], "Redesigns as you grow", "2, 5 or 8 redesigns, depending on your pack, so it can change as your work does.")
+ + svc("t-sky", IC["chat"], "WhatsApp-first", "We message you on WhatsApp to ask for details and share updates as it takes shape.")
+)
+
 port = f"""
 <section class="phero">
 <div class="wrap">
 <div>
 <h1>Your work deserves a place.</h1>
-<p class="lead">CodPox developers build your portfolio and host it at your own address.</p>
-<div class="actions"><a class="btn" href="#request-form">Request your portfolio {arrow()}</a><a class="btn btn--ghost" href="#how">How it works</a></div>
+<p class="lead">CodPox developers build your portfolio and host it at your own address. Packs start at ₹999.</p>
+<div class="actions"><a class="btn" href="#packs">See the packs {arrow()}</a>{form_btn("Request your portfolio", "btn btn--ghost")}</div>
 </div>
 <div class="stage3d"><div class="tilt" data-tilt>
 <div class="browser">
@@ -391,26 +483,18 @@ port = f"""
 </div>
 </section>
 
-<section class="sec">
-<div class="wrap split">
-<h2>What is this service?</h2>
-<div>
-<p class="lead">A personal website built for you by CodPox developers, in your name, at studentname.codpox.com.</p>
-<p>It shows who you are and what you have built. You bring the work. We design it, develop it and host it.</p>
-</div>
+<section class="sec" id="packs">
+<div class="wrap">
+<div class="head"><h2>Pick your pack</h2><p>Three designs, one idea: your work online at your own address. The longer the pack, the more redesigns you get.</p></div>
+<div class="packs">{packs_html}</div>
+<p class="fineprint">All three packs include hosting, a mobile-friendly site and your own yourname.codpox.com address for the length of the pack.</p>
 </div>
 </section>
 
 <section class="sec" style="padding-top:0">
 <div class="wrap">
-<div class="head"><h2>What you get</h2></div>
-<div class="get">
-<article class="card g1 panel--lime"><h3>Built by CodPox developers</h3><p>Designed and developed for you, not a template you fill in alone.</p></article>
-<article class="card g2 panel--sky"><h3>Your own address</h3><p>A subdomain in your name, like yourname.codpox.com.</p></article>
-<article class="card g3"><h3>Hosting included</h3><p>We put it online and keep it running.</p></article>
-<article class="card g4"><h3>Works on mobile</h3><p>It reads well on a phone, a tablet and a laptop.</p></article>
-<article class="card g5 panel--peach"><h3>Your story, in sections</h3><p>About, Education, Skills, Projects, Achievements and Contact.</p></article>
-</div>
+<div class="head"><h2>What comes with every pack</h2><p>The services we add, whichever design you choose.</p></div>
+<div class="svc">{services_html}</div>
 </div>
 </section>
 
@@ -418,9 +502,9 @@ port = f"""
 <div class="wrap">
 <div class="head"><h2>How it works</h2></div>
 <div class="steps" style="grid-template-columns:repeat(4,1fr)">
-<div class="step"><h3>Share</h3><p>Send your details and links to your work.</p></div>
-<div class="step"><h3>We build</h3><p>CodPox developers design and develop your site.</p></div>
-<div class="step"><h3>You review</h3><p>Look it over and ask for changes.</p></div>
+<div class="step"><h3>Pick and send</h3><p>Choose a pack and fill in the request form.</p></div>
+<div class="step"><h3>We message you</h3><p>We contact you on WhatsApp and ask for any further details.</p></div>
+<div class="step"><h3>We build</h3><p>CodPox developers design and develop your site. You review it.</p></div>
 <div class="step"><h3>Go live</h3><p>It goes online at your own address.</p></div>
 </div>
 </div>
@@ -437,41 +521,29 @@ port = f"""
 </section>
 
 <section class="sec" id="request-form" style="padding-top:0">
-<div class="wrap formwrap">
-<div><h2>Request your portfolio</h2><p class="lead" style="margin-top:1.2rem">Tell us who you are and where your work lives. We will take it from there.</p>
-<p style="margin-top:1rem">We confirm the timeline and any cost with you after your request.</p></div>
-<div>
-<form id="request" data-contact="">
-<div class="two">
-<label>Your name<input name="name" required autocomplete="name"></label>
-<label>College and branch<input name="college" required placeholder="College, branch"></label>
+<div class="wrap"><div class="panel panel--lime ctapanel">
+<div><h2>Ready to get yours?</h2>
+<p class="lead" style="margin-top:1rem">Fill in the request form and tell us which pack you want. We will contact you on WhatsApp to ask for further details.</p></div>
+<div class="ctaside">
+<div class="actions" style="margin-top:0">{form_btn("Open the request form")}</div>
+<p>The form opens in Google Forms in a new tab. Keep your project links and a WhatsApp number handy.</p>
 </div>
-<label>Preferred address<span class="field"><input name="address" required placeholder="yourname" pattern="[A-Za-z0-9\\-]+" title="Letters, numbers and hyphens only" autocapitalize="none"><span>.codpox.com</span></span></label>
-<label>Links to your projects <small>Optional. GitHub, live sites, anything you want shown.</small><textarea name="links"></textarea></label>
-<label>Contact number<input name="phone" type="tel" required autocomplete="tel"></label>
-<div><button class="btn" type="submit">Request your portfolio {arrow()}</button></div>
-</form>
-<div class="result" id="result" role="status" aria-live="polite">
-<h3>Your request is ready</h3>
-<pre id="summary"></pre>
-<p id="result-note"></p>
-<div class="actions" style="margin-top:1rem"><button class="btn btn--ghost" id="copy" type="button">Copy request</button></div>
-</div>
-</div>
-</div>
+</div></div>
 </section>
 
 <section class="sec" style="padding-top:0">
 <div class="wrap">
 <div class="head"><h2>Questions</h2></div>
 <details><summary>Who builds the portfolio?</summary><p>CodPox developers design and develop it for you.</p></details>
+<details><summary>Which pack should I pick?</summary><p>Minimal Design if you want a clean portfolio online quickly. Pro Design if you have several projects to show. Design Pro if you want a high-level custom look. Not sure? Ask us on WhatsApp after you send the form.</p></details>
 <details><summary>What will my address look like?</summary><p>A subdomain in your name, such as yourname.codpox.com. If the name you want is taken, we will agree on another with you.</p></details>
-<details><summary>Can I ask for changes?</summary><p>Yes. You review the portfolio before it goes live and can ask for changes then.</p></details>
-<details><summary>How long does it take, and what does it cost?</summary><p>We confirm both with you after you send your request.</p></details>
+<details><summary>How many redesigns do I get?</summary><p>Minimal Design includes 2, Pro Design includes 5 and Design Pro includes 8, all within the length of your pack. Tell us what you want to change and we will confirm it with you on WhatsApp.</p></details>
+<details><summary>What happens when my pack ends?</summary><p>Your address stays live for the full length of your pack. We will message you before it ends so we can agree on the next step together.</p></details>
+<details><summary>How do I pay?</summary><p>After you send the form, we contact you on WhatsApp, confirm your pack and share the payment details there.</p></details>
 <details><summary>Do I need to be in CodPox or SXC?</summary><p>Your portfolio shows the work you have built. Send your request and we will confirm the details with you.</p></details>
 </div>
 </section>
 """
 page("portfolio.html", "Get your portfolio | CodPox",
-     "CodPox developers build your portfolio and host it at yourname.codpox.com. Your work deserves a place.", port)
+     "CodPox developers build your portfolio and host it at yourname.codpox.com. Three packs from ₹999.", port)
 print("built", [p.name for p in OUT.glob("*.html")])
